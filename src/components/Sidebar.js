@@ -2,17 +2,36 @@ import { Avatar, IconButton } from "@material-ui/core";
 import {
   DonutLargeOutlined,
   ChatOutlined,
-  MoreVertOutlined,
+  ExitToApp,
   SearchOutlined,
 } from "@material-ui/icons";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./Sidebar.css";
 import SidebarChat from "./SidebarChat";
+import db, { auth } from "./Firebase";
+import { useStateValue } from "../StateProvider";
+
 function Sidebar() {
+  const [{ user }, dispatch] = useStateValue();
+  const [rooms, setRooms] = useState([]);
+  useEffect(() => {
+    const unsubscribe = db.collection("rooms").onSnapshot((snapshot) =>
+      setRooms(
+        snapshot.docs.map((doc) => ({
+          id: doc.id,
+          data: doc.data(),
+        }))
+      )
+    );
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
   return (
     <div className="sidebar">
       <div className="sidebar_header">
-        <Avatar src="https://avatars1.githubusercontent.com/u/56771492?s=460&u=4afd2f2ce7b4b534ffe9ac137326d80d511c79d7&v=4" />
+        <Avatar src={user?.photoURL} />
         <div className="sidebar_header_right">
           <IconButton>
             <DonutLargeOutlined />
@@ -20,8 +39,8 @@ function Sidebar() {
           <IconButton>
             <ChatOutlined />
           </IconButton>
-          <IconButton>
-            <MoreVertOutlined />
+          <IconButton onClick={() => auth.signOut()}>
+            <ExitToApp />
           </IconButton>
         </div>
       </div>
@@ -35,8 +54,9 @@ function Sidebar() {
 
       <div className="sidebar_chats">
         <SidebarChat addNewChat />
-        <SidebarChat />
-        <SidebarChat />
+        {rooms.map((room) => (
+          <SidebarChat key={room.id} id={room.id} name={room.data.name} />
+        ))}
       </div>
     </div>
   );
