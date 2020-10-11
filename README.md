@@ -1,4 +1,4 @@
-live link:https://clone-fa3b7.web.app/rooms/HgN4D6cazlUO3DYUmIPB
+live link:https://clone-fa3b7.web.app
 ## Available Scripts
 
 In the project directory, you can run:
