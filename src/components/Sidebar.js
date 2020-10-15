@@ -10,8 +10,16 @@ import "./Sidebar.css";
 import SidebarChat from "./SidebarChat";
 import db, { auth } from "./Firebase";
 import { useStateValue } from "../StateProvider";
+import { actionTypes } from "../reducer";
+
 
 function Sidebar() {
+  const logout=()=>{
+    dispatch({
+      type: actionTypes.SET_USER,
+      user: null,
+    });
+  }
   const [{ user }, dispatch] = useStateValue();
   const [rooms, setRooms] = useState([]);
   useEffect(() => {
@@ -39,7 +47,7 @@ function Sidebar() {
           <IconButton>
             <ChatOutlined />
           </IconButton>
-          <IconButton onClick={() => auth.signOut()}>
+          <IconButton onClick={logout}>
             <ExitToApp />
           </IconButton>
         </div>
